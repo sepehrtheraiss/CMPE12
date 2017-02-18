@@ -14,6 +14,7 @@ START_INPUT
 
 		ST R0,INT 		; SET TO ZERO
 		ST R0,DIGIT 	; SET TO ZERO
+		ST R0,FLAG 		; SET TO ZERO
 		LEA R0,OUT_MES	; loads R0 with the OUT_MES memory address
 		PUTS			; outputs the string
 
