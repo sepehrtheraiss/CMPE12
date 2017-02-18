@@ -59,6 +59,7 @@ CONTINUE
         ADD R4,R4,#-1	;decrement COUNT
         BRzp MASK_LOOP
         LD R0,NEWLINE
+        NOT R0,R0		; -10 -> 10
         OUT
         BRn INPUT_LOOP
 END_PROGRAM
