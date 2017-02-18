@@ -10,6 +10,9 @@
 		LEA R0,GMS		; load the address of GMS string
 		PUTS			; outputs the string 
 START_INPUT
+		AND R0,R0,0
+		ST R0,INT 		; SET TO ZERO
+		ST R0,DIGIT 	; SET TO ZERO
 		LEA R0,OUT_MES	; loads R0 with the OUT_MES memory address
 		PUTS			; outputs the string
 
@@ -40,7 +43,7 @@ MULTIPLY
 		ADD R4,R4,R1	; INT = INT * 10 + DIGIT
 		ST R4,INT 		; INT = INT * 10 + DIGIT
 		AND R4,R4,#0	; SET TO ZERO
-		BRz START_INPUT
+		BRz INPUT_LOOP
 EXIT_INPUT_LOOP		
 		LD R1,EXIT
 		BRp END_PROGRAM ; IF EXIT == 1
@@ -63,10 +66,10 @@ CONTINUE
         BRzp MASK_LOOP
         ;LD R0,NEWLINE
         ;NOT R0,R0		; -10 -> 10
-        ;OUT
-        LEA R0,NEXT
-        PUTS
-        BRp INPUT_LOOP
+        AND R0,R0,#0
+        ADD R0,R0,#10 	; '\n'
+        OUT
+        BRp START_INPUT
 END_PROGRAM
 		LEA R0,BYE		; load the address of BYE string
 		PUTS			; outputs the string 
@@ -106,7 +109,6 @@ GMS     .STRINGZ "Welcome to the conversion program\n"
 OUT_MES .STRINGZ "Enter a decimal number or X to quit:\n" 
 THANKS	.STRINGZ "Thanks, here it is in binary\n"
 BYE		.STRINGZ "Bye. Have a great day.\n"
-NEXT	.STRINGZ "\n"
 INT		.FILL #0
 DIGIT	.FILL #0
 FLAG	.FILL #0
