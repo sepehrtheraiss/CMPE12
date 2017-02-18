@@ -46,6 +46,8 @@ EXIT_INPUT_LOOP
 		LD R1,FLAG    	; LOAD FLAG
 		BRp TWO_COMP 	; IF FLAG == 1
 START_MASK
+		LEA R0,THANKS	; load the address of THANKS string
+		PUTS			; outputs the string 
 		LD R1,INT 		; LOAD INT
         LD R4,COUNT 	; 15
         LEA R2,MASK 	; load memory address of MASK
@@ -61,7 +63,7 @@ CONTINUE
         LD R0,NEWLINE
         NOT R0,R0		; -10 -> 10
         OUT
-        BRn INPUT_LOOP
+        BRp INPUT_LOOP
 END_PROGRAM
 		LEA R0,BYE		; load the address of BYE string
 		PUTS			; outputs the string 
@@ -99,6 +101,7 @@ PRINT_ONE
 
 GMS     .STRINGZ "Welcome to the conversion program\n"	
 OUT_MES .STRINGZ "Enter a decimal number or X to quit:\n" 
+THANKS	.STRINGZ "Thanks, here it is in binary\n"
 BYE		.STRINGZ "Bye. Have a great day.\n"
 INT		.FILL #0
 DIGIT	.FILL #0
