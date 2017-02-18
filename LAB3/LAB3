@@ -58,6 +58,8 @@ CONTINUE
         ADD R2,R2,#1	;increment memory address of mask
         ADD R4,R4,#-1	;decrement COUNT
         BRzp MASK_LOOP
+        LD R0,NEWLINE
+        OUT
         BRn INPUT_LOOP
 END_PROGRAM
 		LEA R0,BYE		; load the address of BYE string
