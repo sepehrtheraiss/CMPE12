@@ -110,7 +110,7 @@ PRINT_ONE
 GMS     .STRINGZ "Welcome to the conversion program\n"	
 OUT_MES .STRINGZ "Enter a decimal number or X to quit:\n" 
 THANKS	.STRINGZ "Thanks, here it is in binary\n"
-BYE		.STRINGZ "Bye. Have a great day.\n"
+BYE		.STRINGZ "Bye. Have a great day."
 INT		.FILL #0
 DIGIT	.FILL #0
 FLAG	.FILL #0
