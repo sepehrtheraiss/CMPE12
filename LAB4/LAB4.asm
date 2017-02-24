@@ -32,6 +32,8 @@ GET_INPUT
 	BRz FLAG_X
 	BRnp GET_INPUT	;if user entered some other letters, loop back
 GET_CIPHER
+	LD R1,FLAG
+	BRn EXIT_PROGRAM ; if flag = -1
 	LEA R0,CIPHER_KEY
 	PUTS
 CIPHER_INPUT
