@@ -124,13 +124,14 @@ FLAG_X
 	AND R1,R1,0
 	BRz GET_INPUT
 DECRYPT_CHAR
+	ST R0,VAR_A
 	LD R4,CIPHER
 	NOT R4,R4           ; CIPHER * -1
 	ADD R4,R4,1	 		; CIPHER * -1
 	ADD R0,R0,R4 	    ; ARRAY[I]CHAR - CIPHER
-	OUT
 	STR R0,R3,0    		; ARRAY[200+i] = char - cipher
 	ADD R3,R3,1			; ARRAY[200]++
+	LD R0,VAR_A
 	RET
 
 FLAG        .FILL 0
@@ -142,6 +143,7 @@ ZERO 		.FILL -48
 CIPHER  	.FILL 0
 DIGIT 		.FILL 0
 DE_ARRAY 	.FILL 200
+VAR_A		.FILL 0		
 GREETING	.STRINGZ "Hello, welcome to my Caesar Cipher program\n"
 OPTIONS		.STRINGZ "Do you want to (E)ncrypt or (D)ecrypt or e(X)it?\n"
 CIPHER_KEY 	.STRINGZ "What is the cipher (1-25)?\n"
