@@ -80,6 +80,7 @@ EXIT_PROGRAM
 	ADD R0,R0,1
 	OUT
 	LD R4,DE_ARRAY
+	LEA R0,ARRAY
 	ADD R0,R0,R4
 	PUTS
 	LD R0,LF
@@ -125,17 +126,13 @@ FLAG_X
 DECRYPT_CHAR
 	LD R4,CIPHER
 	NOT R4,R4           ; CIPHER * -1
-	Add R4,R4,1
+	ADD R4,R4,1	 		; CIPHER * -1
 	ADD R0,R0,R4 	    ; ARRAY[I]CHAR - CIPHER
 	OUT
-	STR R4,R3,0    		; 
+	STR R0,R3,0    		; ARRAY[200+i] = char - cipher
 	ADD R3,R3,1			; ARRAY[200]++
 	RET
 
-
-GREETING	.STRINGZ "Hello, welcome to my Caesar Cipher program\n"
-OPTIONS		.STRINGZ "Do you want to (E)ncrypt or (D)ecrypt or e(X)it?\n"
-CIPHER_KEY 	.STRINGZ "What is the cipher (1-25)?\n"
 FLAG        .FILL 0
 D 			.FILL -68
 E 			.FILL -69
@@ -145,6 +142,9 @@ ZERO 		.FILL -48
 CIPHER  	.FILL 0
 DIGIT 		.FILL 0
 DE_ARRAY 	.FILL 200
+GREETING	.STRINGZ "Hello, welcome to my Caesar Cipher program\n"
+OPTIONS		.STRINGZ "Do you want to (E)ncrypt or (D)ecrypt or e(X)it?\n"
+CIPHER_KEY 	.STRINGZ "What is the cipher (1-25)?\n"
 ARRAY 		.BLKW 400
 
 .END
