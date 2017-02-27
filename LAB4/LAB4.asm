@@ -18,7 +18,7 @@ START_PROGRAM
 GET_INPUT
 	GETC
 	OUT
-	LD R1,LF	; '\n'
+	LD R1,LF	    ; '\n'
 	ADD R1,R0,R1
 	BRz GET_CIPHER	; if char == LF
 	LD R1,D
@@ -58,7 +58,7 @@ MULT_LOOP
 	AND R3,R3,0 	; reset to zero
 	BRnzp CIPHER_INPUT
 
-D_E 
+D_E  ; DECRYPT and Encrypt
 	AND R4,R4,0			; REINIT
 	AND R3,R3,0			; REINIT
 	AND R2,R2,0			; REINIT 
@@ -66,28 +66,15 @@ D_E
 	LEA R2,ARRAY 		; ARRAY[I]
 	LEA R3,ARRAY 	    ; ARRAY[I+200]
 	LD R4,DE_ARRAY
-	ADD R3,R3,R4  ; ARRAY[200]
+	ADD R3,R3,R4  	    ; ARRAY[200]
 	LD R1,FLAG
 	BRn EXIT_PROGRAM	; if flag = -1
 	BRz GET_D_STRING	; if flag = 0
 	BRp GET_E_STRING	; if flag = 1
 
 EXIT_PROGRAM
-	LEA R0,ARRAY
+	LEA R0,GOODBYE
 	PUTS
-	LD R0,LF
-	NOT R0,R0
-	ADD R0,R0,1
-	OUT
-	LD R4,DE_ARRAY
-	LEA R0,ARRAY
-	ADD R0,R0,R4
-	PUTS
-	LD R0,LF
-	NOT R0,R0
-	ADD R0,R0,1
-	OUT
-
 HALT
 
 GET_E_STRING
@@ -102,12 +89,10 @@ GET_E_STRING
 	AND R0,R0,0
 	STR R0,R2,0     ; ARRAY[i]='\0'
 	STR R0,R3,0  	; ARRAY[200+I] = '\0'
-	BRz EXIT_PROGRAM
+	JSR PRINT_STUFF
+	BRnzp START_PROGRAM
 GET_D_STRING
-	GETC
-	OUT
-	STR R0,R2,0 	; ARRAY[i] = char
-	BR EXIT_PROGRAM
+
 FLAG_D
 	ADD R1,R1,1
 	ST R1,FLAG
@@ -125,16 +110,94 @@ FLAG_X
 	BRz GET_INPUT
 DECRYPT_CHAR
 	ST R0,VAR_A
-	LD R4,CIPHER
-	NOT R4,R4           ; CIPHER * -1
-	ADD R4,R4,1	 		; CIPHER * -1
-	ADD R0,R0,R4 	    ; ARRAY[I]CHAR - CIPHER
+	ST R1,VAR_B
+	ST R5,VAR_C
+	LD R5,A 			; 65
+	NOT R5,R5
+	ADD R5,R5,1			; -65
+	ADD R1,R0,R5		; char - 65
+	BRn NO_CRYPTION 	; char - 65 < 0 
+	LD R5,Z				; 90 
+	NOT R0,R0 			
+	ADD R0,R0,1			; -char
+	ADD R1,R5,R0		; 90 - char
+	BRn GREATER_THAN_Z 	; 90 - char < 0 
+	LD R0,VAR_A
+	LD R5,CIPHER
+	NOT R5,R5           ; CIPHER * -1
+	ADD R5,R5,1	 		; CIPHER * -1
+	ADD R0,R0,R5 	    ; ARRAY[200+i] = char - cipher
 	STR R0,R3,0    		; ARRAY[200+i] = char - cipher
+RESUME	
 	ADD R3,R3,1			; ARRAY[200]++
+	LD R0,VAR_A
+	LD R1,VAR_B
+	LD R5,VAR_C
+	RET
+ENCRYPT_CHAR
+	ST R0,VAR_A
+	LD R4,CIPHER 		; CIPHER
+	ADD R0,R0,R4 		; CHAR + CIPHER
+	; Check for overflow
+	STR R0,R3,0			; ARRAY[i] = CHAR + CIPHER
+	ADD R2,R2,1 		; ARRAY[i]++
+	LD R0,VAR_A
+	RET
+NO_CRYPTION  ; doesnt need cryptioning 
+	LD R0,VAR_A
+	LD R5,FLAG
+	BRp ADD_TO_DECRYPTED ; flag = 1
+	BRz ADD_TO_ENCRYPTED ; flag = 0
+GREATER_THAN_Z
+	NOT R0,R0
+	ADD R0,R0,1 		; + char
+	LD R5,a				; 97
+	NOT R5,R5 			
+	ADD R5,R5,1			; -97
+	ADD R1,R0,R5		; char - 97
+	BRn NO_CRYPTION  	; char - 97 < 0
+	LD R5,z				; 122
+	NOT R0,R0 			
+	ADD R0,R0,1			; -char
+	ADD R1,R0,R5		; 122 - char
+	BRn NO_CRYPTION  	; 122 - char < 0
+	
+ADD_TO_DECRYPTED
+	STR R0,R4,0
+	BRnzp RESUME
+ADD_TO_ENCRYPTED
+	STR R0,R3,0
+	BRnzp RESUME	
+PRINT_STUFF	
+	ST R0,VAR_A
+	LEA R0,HERE
+	PUTS
+	LEA R0,EN_MESSAGE
+	PUTS
+	LEA R0,ARRAY
+	PUTS
+	;LD R0,LF
+	;NOT R0,R0
+	;ADD R0,R0,1
+	;OUT
+	LEA R0,EN_MESSAGE
+	PUTS
+	LD R4,DE_ARRAY ; value 200
+	LEA R0,ARRAY
+	ADD R0,R0,R4
+	PUTS
+	;LD R0,LF
+	;NOT R0,R0
+	;ADD R0,R0,1
+	;OUT
 	LD R0,VAR_A
 	RET
 
 FLAG        .FILL 0
+A 			.FILL 65
+Z 			.FILL 90
+a 			.FILL 97
+z 			.FILL 122
 D 			.FILL -68
 E 			.FILL -69
 LF			.FILL -10
@@ -143,10 +206,17 @@ ZERO 		.FILL -48
 CIPHER  	.FILL 0
 DIGIT 		.FILL 0
 DE_ARRAY 	.FILL 200
-VAR_A		.FILL 0		
+VAR_A		.FILL 0
+VAR_B		.FILL 0
+VAR_C  		.FILL 0		
 GREETING	.STRINGZ "Hello, welcome to my Caesar Cipher program\n"
 OPTIONS		.STRINGZ "Do you want to (E)ncrypt or (D)ecrypt or e(X)it?\n"
 CIPHER_KEY 	.STRINGZ "What is the cipher (1-25)?\n"
+STR_MESSAGE .STRINGZ "What is the string(up to 200 characters)?\n"
+HERE 		.STRINGZ "Here is your string and the decrypted result\n"
+GOODBYE 	.STRINGZ "Goodbye\n"
+EN_MESSAGE 	.STRINGZ "<Encrypted> "
+DE_MESSAGE 	.STRINGZ "<Decrypted> "
 ARRAY 		.BLKW 400
 
 .END
