@@ -63,8 +63,8 @@ D_E  ; DECRYPT and Encrypt
 	AND R3,R3,0			; REINIT
 	AND R2,R2,0			; REINIT 
 	AND R1,R1,0			; REINIT
-	LEA R2,ARRAY 		; ARRAY[I]
-	LEA R3,ARRAY 	    ; ARRAY[I+200]
+	LEA R2,ARRAY		;ARRAY[I]
+	LEA R3,ARRAY		;ARRAY[I+200]
 	LD R4,DE_ARRAY
 	ADD R3,R3,R4  	    ; ARRAY[200]
 	LD R1,FLAG
@@ -73,8 +73,7 @@ D_E  ; DECRYPT and Encrypt
 	BRp GET_E_STRING	; if flag = 1
 
 EXIT_PROGRAM
-	LEA R0,GOODBYE
-	PUTS
+	
 HALT
 
 GET_E_STRING
@@ -91,7 +90,7 @@ GET_E_STRING
 	STR R0,R3,0  	; ARRAY[200+I] = '\0'
 	JSR PRINT_STUFF
 	BRnzp START_PROGRAM
-GET_D_STRING
+GET_D_STRING AND R6,R6,0
 
 FLAG_D
 	ADD R1,R1,1
@@ -170,26 +169,13 @@ ADD_TO_ENCRYPTED
 	BRnzp RESUME	
 PRINT_STUFF	
 	ST R0,VAR_A
-	LEA R0,HERE
-	PUTS
-	LEA R0,EN_MESSAGE
 	PUTS
 	LEA R0,ARRAY
-	PUTS
-	;LD R0,LF
-	;NOT R0,R0
-	;ADD R0,R0,1
-	;OUT
-	LEA R0,EN_MESSAGE
 	PUTS
 	LD R4,DE_ARRAY ; value 200
 	LEA R0,ARRAY
 	ADD R0,R0,R4
 	PUTS
-	;LD R0,LF
-	;NOT R0,R0
-	;ADD R0,R0,1
-	;OUT
 	LD R0,VAR_A
 	RET
 
@@ -212,11 +198,6 @@ VAR_C  		.FILL 0
 GREETING	.STRINGZ "Hello, welcome to my Caesar Cipher program\n"
 OPTIONS		.STRINGZ "Do you want to (E)ncrypt or (D)ecrypt or e(X)it?\n"
 CIPHER_KEY 	.STRINGZ "What is the cipher (1-25)?\n"
-STR_MESSAGE .STRINGZ "What is the string(up to 200 characters)?\n"
-HERE 		.STRINGZ "Here is your string and the decrypted result\n"
-GOODBYE 	.STRINGZ "Goodbye\n"
-EN_MESSAGE 	.STRINGZ "<Encrypted> "
-DE_MESSAGE 	.STRINGZ "<Decrypted> "
 ARRAY 		.BLKW 400
 
 .END
