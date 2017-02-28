@@ -164,13 +164,27 @@ D_CHAR	LD R0,VAR_A
 	NOT R5,R5           ; CIPHER * -1
 	ADD R5,R5,1	 		; CIPHER * -1
 	ADD R0,R0,R5 	    ; char - cipher
-	STR R0,R3,0    		; ARRAY[200+i] = char - cipher
 RESUME_D	
-	ADD R3,R3,1			; ARRAY[200]++
+	NOT R0,R0
+	ADD R0,R0,1		;  - char
+	LD R5,A
+	ADD R5,R5,R0 	; 65 - char
+	BRnz CHECK_LOWER_CASE_a 
+	BRp  OVERFLOW_DE
+NO_FLOW_D
+	STR R0,R3,0    		; ARRAY[200+i] = char - cipher
+R_D	ADD R3,R3,1			; ARRAY[200]++
 	LD R0,VAR_A
 	LD R1,VAR_B
 	LD R5,VAR_C
 	RET
+CHECK_LOWER_CASE_a
+	LD R5,a
+	ADD R5,R5,R0 	; 97 - char
+	BRp OVERFLOW_DE
+	NOT R0,R0
+	ADD R0,R0,1
+	BRnzp NO_FLOW_D
 ENCRYPT_CHAR
 	ST R0,VAR_A
 	ST R7,VAR_B
@@ -188,11 +202,34 @@ E_CHAR	LD R0,VAR_A
 	LD R4,CIPHER 		; CIPHER
 	ADD R0,R0,R4 		; CHAR + CIPHER
 RESUME_E		; Check for overflow
+	NOT R0,R0
+	ADD R0,R0,1		;  - char
+	LD R5,Z
+	ADD R5,R5,R0 	; Z - char
+	BRnz CHECK_LOWER_CASE_z 
+	BRp  OVERFLOW_EN
+NO_FLOW_E
 	STR R0,R2,0			; ARRAY[i] = CHAR + CIPHER
-	ADD R2,R2,1 		; ARRAY[i]++
+R_E	ADD R2,R2,1 		; ARRAY[i]++
 	LD R0,VAR_A
 	LD R7,VAR_B
 	RET
+CHECK_LOWER_CASE_a
+	LD R5,Z
+	ADD R5,R5,R0 	; Z - char
+	BRp OVERFLOW_DE
+	NOT R0,R0
+	ADD R0,R0,1
+	BRnzp NO_FLOW_E	
+OVERFLOW_DE
+	NOT R0,R0
+	ADD R0,R0,1
+	ADD R0,R0,26
+OVERFLOW_EN
+	NOT R0,R0
+	ADD R0,R0,1
+	ADD R0,R0,-26
+	BRnzp R_D 	; return Decryption
 NO_CRYPTION  ; doesnt need cryptioning 
 	LD R0,VAR_A
 	LD R5,FLAG
