@@ -59,12 +59,18 @@ MULT_LOOP
 	BRnzp CIPHER_INPUT
 
 D_E  ; DECRYPT and Encrypt
+	AND R6,R6,0			; REINIT
+	AND R5,R5,0			; REINIT
 	AND R4,R4,0			; REINIT
 	AND R3,R3,0			; REINIT
 	AND R2,R2,0			; REINIT 
 	AND R1,R1,0			; REINIT
-	LEA R2,ARRAY		;ARRAY[I]
-	LEA R3,ARRAY		;ARRAY[I+200]
+	ARR_ADDRESS .FILL ARRAY 
+	LD R6,ARR_ADDRESS
+	LDR R2,R6,0
+	LDR R3,R6,0 
+	;LEA R2,ARRAY 		; ARRAY[I]
+	;LEA R3,ARRAY 	    ; ARRAY[I+200]
 	LD R4,DE_ARRAY
 	ADD R3,R3,R4  	    ; ARRAY[200]
 	LD R1,FLAG
@@ -72,8 +78,11 @@ D_E  ; DECRYPT and Encrypt
 	BRz GET_D_STRING	; if flag = 0
 	BRp GET_E_STRING	; if flag = 1
 
-EXIT_PROGRAM
-	
+EXIT_PROGRAM AND R6,R6,0 ; compiler complains
+	GG .FILL GOODBYE
+	LD R6,GG
+	LDR R0,R6,0
+	PUTS
 HALT
 
 GET_E_STRING
@@ -169,16 +178,32 @@ ADD_TO_ENCRYPTED
 	BRnzp RESUME	
 PRINT_STUFF	
 	ST R0,VAR_A
+	LD R0,FLAG
+	BRz P_H_E 	; print here decrypted 
+	LEA R0,HERE_D
 	PUTS
-	LEA R0,ARRAY
+C_P_STUFF AND R6,R6,0
+	EN_ADDRESS .FILL EN_MESSAGE 
+	LD R0,EN_ADDRESS  
+	LDR R0,R0,0
+	PUTS
+	LD R6,ARR_ADDRESS
+	LDR R0,R6,0
+	PUTS
+	DE_ADDRESS .FILL DE_MESSAGE
+	LD R0, DE_ADDRESS 
+	LDr R0,R0,0 
 	PUTS
 	LD R4,DE_ARRAY ; value 200
-	LEA R0,ARRAY
+	LDR R0,R6,0
 	ADD R0,R0,R4
 	PUTS
 	LD R0,VAR_A
 	RET
-
+P_H_E 
+	LEA R0, HERE_E 
+	PUTS
+	BRnzp C_P_STUFF 	; continue print stuff
 FLAG        .FILL 0
 A 			.FILL 65
 Z 			.FILL 90
@@ -198,6 +223,12 @@ VAR_C  		.FILL 0
 GREETING	.STRINGZ "Hello, welcome to my Caesar Cipher program\n"
 OPTIONS		.STRINGZ "Do you want to (E)ncrypt or (D)ecrypt or e(X)it?\n"
 CIPHER_KEY 	.STRINGZ "What is the cipher (1-25)?\n"
+STR_MESSAGE .STRINGZ "What is the string(up to 200 characters)?\n"
+HERE_D		.STRINGZ "Here is your string and the decrypted result\n"
+HERE_E 		.STRINGZ "Here is your string and the encrypted result\n"
+GOODBYE 	.STRINGZ "Goodbye\n"
+EN_MESSAGE 	.STRINGZ "<Encrypted> "
+DE_MESSAGE 	.STRINGZ "<Decrypted> "
 ARRAY 		.BLKW 400
 
 .END
