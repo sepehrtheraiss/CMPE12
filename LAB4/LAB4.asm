@@ -154,12 +154,12 @@ DECRYPT_CHAR
 	ADD R5,R5,1			; -65
 	ADD R1,R0,R5		; char - 65
 	BRn NO_CRYPTION 	; char - 65 < 0 
-	;LD R5,Z				; 90 
-	;NOT R0,R0 			
-	;ADD R0,R0,1			; -char
-	;ADD R1,R5,R0		; 90 - char
-	;BRn GREATER_THAN_Z 	; 90 - char < 0 
-	LD R0,VAR_A
+	LD R5,Z				; 90 
+	NOT R0,R0 			
+	ADD R0,R0,1			; -char
+	ADD R1,R5,R0		; 90 - char
+	BRn GREATER_THAN_Z 	; 90 - char < 0 
+D_CHAR	LD R0,VAR_A
 	LD R5,CIPHER
 	NOT R5,R5           ; CIPHER * -1
 	ADD R5,R5,1	 		; CIPHER * -1
@@ -179,6 +179,7 @@ ENCRYPT_CHAR
 	ADD R5,R5,1			; -65
 	ADD R1,R0,R5		; char - 65
 	BRn NO_CRYPTION 	; char - 65 < 0 
+E_CHAR	LD R0,VAR_A
 	LD R4,CIPHER 		; CIPHER
 	ADD R0,R0,R4 		; CHAR + CIPHER
 	;OUT
@@ -206,7 +207,9 @@ GREATER_THAN_Z
 	ADD R0,R0,1			; -char
 	ADD R1,R0,R5		; 122 - char
 	BRn NO_CRYPTION  	; 122 - char < 0
-	
+	LD R5,FLAG
+	BRz E_CHAR;encrypt
+	BRp D_CHAR; decrypt
 ADD_TO_DECRYPTED
 	STR R0,R3,0
 	BRnzp RESUME_D
@@ -238,8 +241,8 @@ P_H_E
 	LEA R0, HERE_E 
 	PUTS
 	BRnzp C_P_STUFF 	; continue print stuff
-FLAG        .FILL 0
-A 			.FILL 65
+FLAG      	.FILL 0
+A 	  	.FILL 65
 Z 			.FILL 90
 a 			.FILL 97
 z 			.FILL 122
@@ -257,12 +260,11 @@ VAR_C  		.FILL 0
 GREETING	.STRINGZ "Hello, welcome to my Caesar Cipher program\n"
 OPTIONS		.STRINGZ "Do you want to (E)ncrypt or (D)ecrypt or e(X)it?\n"
 CIPHER_KEY 	.STRINGZ "What is the cipher (1-25)?\n"
-STR_MESSAGE .STRINGZ "What is the string(up to 200 characters)?\n"
+STR_MESSAGE     .STRINGZ "What is the string(up to 200 characters)?\n"
 HERE_D		.STRINGZ "Here is your string and the decrypted result\n"
 HERE_E 		.STRINGZ "Here is your string and the encrypted result\n"
 GOODBYE 	.STRINGZ "Goodbye\n"
 EN_MESSAGE 	.STRINGZ "<Encrypted> "
 DE_MESSAGE 	.STRINGZ "<Decrypted> "
 ARRAY 		.BLKW 400
-
 .END
