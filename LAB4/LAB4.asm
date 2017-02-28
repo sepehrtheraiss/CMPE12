@@ -69,14 +69,10 @@ D_E  ; DECRYPT and Encrypt
 	LD R6,ARR_ADDRESS
 	LDR R2,R6,0
 	LDR R3,R6,0 
-	;LEA R2,ARRAY 		; ARRAY[I]
-	;LEA R3,ARRAY 	    ; ARRAY[I+200]
 	LD R4,DE_ARRAY
 	ADD R3,R3,R4  	    ; ARRAY[200]
 	LD R1,FLAG
 	BRn EXIT_PROGRAM	; if flag = -1
-	LEA R0,STR_MESSAGE
-	PUTS
 	BRz GET_D_STRING	; if flag = 0
 	BRp GET_E_STRING	; if flag = 1
 
@@ -88,20 +84,23 @@ EXIT_PROGRAM AND R6,R6,0 ; compiler complains
 HALT
 
 GET_E_STRING
-	GETC
+	LEA R0,STR_MESSAGE
+	PUTS
+CON_E	GETC
 	OUT
 	STR R0,R2,0 	; ARRAY[i] = char
 	JSR DECRYPT_CHAR 
 	ADD R2,R2,1 	; ARRAY++
 	LD R1,LF		; R1 = '\n'
 	ADD R1,R0,R1 	; if char == '\n'
-	BRp GET_E_STRING; IF LF EXIT else get input
+	BRp CON_E	; IF LF EXIT else get input
 	AND R0,R0,0
 	STR R0,R2,0     ; ARRAY[i]='\0'
 	STR R0,R3,0  	; ARRAY[200+I] = '\0'
 	JSR PRINT_STUFF
 	BRnzp START_PROGRAM
-GET_D_STRING AND R6,R6,0
+GET_D_STRING 
+	AND R6,R6,0
 
 FLAG_D
 	ADD R1,R1,1
