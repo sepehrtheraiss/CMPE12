@@ -179,10 +179,14 @@ ENCRYPT_CHAR
 	ADD R5,R5,1			; -65
 	ADD R1,R0,R5		; char - 65
 	BRn NO_CRYPTION 	; char - 65 < 0 
+	LD R5,Z				; 90 
+	NOT R0,R0 			
+	ADD R0,R0,1			; -char
+	ADD R1,R5,R0		; 90 - char
+	BRn GREATER_THAN_Z 	; 90 - char < 0 
 E_CHAR	LD R0,VAR_A
 	LD R4,CIPHER 		; CIPHER
 	ADD R0,R0,R4 		; CHAR + CIPHER
-	;OUT
 RESUME_E		; Check for overflow
 	STR R0,R2,0			; ARRAY[i] = CHAR + CIPHER
 	ADD R2,R2,1 		; ARRAY[i]++
@@ -242,7 +246,7 @@ P_H_E
 	PUTS
 	BRnzp C_P_STUFF 	; continue print stuff
 FLAG      	.FILL 0
-A 	  	.FILL 65
+A 	  	    .FILL 65
 Z 			.FILL 90
 a 			.FILL 97
 z 			.FILL 122
