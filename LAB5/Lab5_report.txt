@@ -1,0 +1,9 @@
+Sepehr Raissian
+sraissia
+CMPE 12
+Lab 5
+Section D 
+Write about what you were trying to do, your strategy for doing so, what issues you encountered along the way, what you learned, what you would do differently next time.
+For part 1: my end goal was to turn each led on corresponding to the button and switches turned on. Each LED and buttons has its on register thats one bit and needs to be on. For example for LED 1 to be turn on the register 0 needs to be send a 1 bit to turn on LED 2 bit 10. For buttons other than the first one which has a different bit I didn’t haven to do any additional work, since it start from bit 5-7. as for the first button the bit was 10 so I had to shift it by 3 to the right to get bit 4 to turn LED 4 on. for switches, bit shift by 4 to the left. and I had to use mask for the desired buttons to get the actual value, because there is a possibility of getting incorrect value.
+
+For part 2: my end goal was to turn each led on in sequence from 1-8 then 8-1, and switches 1-4 defines binary number format 1-16 for multiplying the speed of the light. which follows almost the same procedure as the previous part. The most difficult and time consuming part was to find the right time delay, which I end up taking an educated guess and trial and error. other than that it was simple to implement it. for led 1-8 would be one loop and when it reached led 8 the loop would switch to the second loop which would turn on and off from 8-1. since the next bit of led contains zero and only one one, I didn’t have to explicitly turn the previous light off, since it would turn it off as I would turn the next led on. As for getting the users input I would get the switch input prior to the next led being turn on and calculate the speed based number of switches turn on add one then multiply by the educated guess number of counter loop to waste time, so it  wouldn’t immediately turn the led off. 

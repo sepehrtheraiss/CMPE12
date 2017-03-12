@@ -1,5 +1,6 @@
 /*
  *  Sepehr Raissian
+ *  sraissia
  *  CMPE 12
  *  LAB 5 part 1
  *  SECTION 1D 
@@ -7,7 +8,7 @@
 #include <WProgram.h>
 #include <xc.h>
 /* define all global symbols here */
-#.global main
+.global main
     
 
 .text
